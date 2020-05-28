@@ -64,8 +64,8 @@ public class ListenableFutures
             }
           });
         }
-        catch (Exception e) {
-          finalFuture.setException(e);
+        catch (Throwable t) {
+          finalFuture.setException(t);
         }
       }
 
