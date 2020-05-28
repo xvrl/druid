@@ -47,21 +47,26 @@ public class ListenableFutures
       @Override
       public void onSuccess(@Nullable I result)
       {
-        final ListenableFuture<O> transformFuture = transform.apply(result);
-        Futures.addCallback(transformFuture, new FutureCallback<O>()
-        {
-          @Override
-          public void onSuccess(@Nullable O result)
+        try {
+          final ListenableFuture<O> transformFuture = transform.apply(result);
+          Futures.addCallback(transformFuture, new FutureCallback<O>()
           {
-            finalFuture.set(result);
-          }
+            @Override
+            public void onSuccess(@Nullable O result)
+            {
+              finalFuture.set(result);
+            }
 
-          @Override
-          public void onFailure(Throwable t)
-          {
-            finalFuture.setException(t);
-          }
-        });
+            @Override
+            public void onFailure(Throwable t)
+            {
+              finalFuture.setException(t);
+            }
+          });
+        }
+        catch (Exception e) {
+          finalFuture.setException(e);
+        }
       }
 
       @Override
