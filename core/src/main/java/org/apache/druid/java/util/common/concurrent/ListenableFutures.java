@@ -65,6 +65,7 @@ public class ListenableFutures
           });
         }
         catch (Throwable t) {
+          // fail the output if the function throws an exception
           finalFuture.setException(t);
         }
       }
@@ -73,6 +74,7 @@ public class ListenableFutures
       public void onFailure(Throwable t)
       {
         if (inFuture.isCancelled()) {
+          // ensure cancelling the input propagates to the output
           finalFuture.cancel(true);
         } else {
           finalFuture.setException(t);
@@ -91,8 +93,10 @@ public class ListenableFutures
       @Override
       public void onFailure(Throwable t)
       {
+        // ensures cancelling the output propagates to the input
         if (finalFuture.isCancelled()) {
           inFuture.cancel(true);
+
         }
       }
     });
