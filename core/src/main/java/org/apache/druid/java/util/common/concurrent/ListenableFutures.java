@@ -72,7 +72,28 @@ public class ListenableFutures
       @Override
       public void onFailure(Throwable t)
       {
-        finalFuture.setException(t);
+        if (inFuture.isCancelled()) {
+          finalFuture.cancel(true);
+        } else {
+          finalFuture.setException(t);
+        }
+      }
+    });
+
+    Futures.addCallback(finalFuture, new FutureCallback<O>()
+    {
+      @Override
+      public void onSuccess(@Nullable O result)
+      {
+
+      }
+
+      @Override
+      public void onFailure(Throwable t)
+      {
+        if (finalFuture.isCancelled()) {
+          inFuture.cancel(true);
+        }
       }
     });
     return finalFuture;
